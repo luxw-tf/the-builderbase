@@ -1,0 +1,77 @@
+:root {
+  /* Colors - Light Theme */
+  --bg-primary: #8cbbea; /* Sky Blue */
+  --bg-secondary: #fdfaf6; /* Soft Cream */
+  --accent-lime: #b6ff40;
+  --accent-orange: #ff9d6c;
+  --accent-pink: #ffb5b5;
+  --text-dark: #1a1a1a;
+  --text-light: #ffffff;
+  
+  /* Fonts */
+  --font-display: 'Anton', sans-serif;
+  --font-body: 'Inter', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  font-family: var(--font-body);
+  background-color: #000000;
+  color: var(--text-dark);
+  overflow-x: hidden;
+  /* Lenis needs html and body to be auto but Lenis handles scroll */
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  font-weight: 400;
+  margin: 0;
+}
+
+p {
+  line-height: 1.6;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+ul {
+  list-style: none;
+}
+
+/* Utilities */
+.container {
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* Smooth Scrolling */
+html.lenis {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}

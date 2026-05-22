@@ -1,0 +1,389 @@
+.app {
+  width: 100%;
+}
+
+/* Base Section Style */
+.section {
+  width: 100%;
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 100px 0;
+}
+
+.section-title {
+  font-size: 8vw;
+  color: var(--text-dark);
+  text-align: center;
+  letter-spacing: 2px;
+  line-height: 1;
+}
+
+/* 1. Hero Section */
+.hero {
+  background: var(--bg-primary);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space out top nav, center content, and bottom text */
+  align-items: center;
+  height: 100vh;
+  padding: 40px 0;
+  box-sizing: border-box;
+}
+
+/* Background Image + Blur + Vignette Setup */
+.hero-bg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.hero-video-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 177.78vh; /* 16:9 Aspect Ratio cover based on height */
+  height: 56.25vw; /* 16:9 Aspect Ratio cover based on width */
+  min-height: 100%;
+  min-width: 100%;
+  transform: translate(-50%, -50%) scale(1.1); /* Center & Scale to cover edges with blur */
+  filter: blur(6px); /* Same blur filter */
+  border: none;
+  pointer-events: none; /* Prevent clicks on the iframe background video */
+  z-index: 1;
+}
+
+.hero-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* Radial vignette + Linear vignette (darker from the bottom) */
+  background: 
+    linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 60%),
+    radial-gradient(circle at center, transparent 30%, rgba(0, 0, 0, 0.4) 100%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Nav (Minimal / overlay) */
+.nav-bar {
+  position: relative;
+  width: 100%;
+  padding: 0 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
+}
+
+.btn-connect {
+  background: var(--accent-lime);
+  color: var(--text-dark);
+  padding: 12px 24px;
+  border-radius: 50px;
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Hero Typography (BUILDERBASE split for GSAP) */
+.hero-content {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-grow: 1;
+}
+
+.hero-title-wrap {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  font-family: var(--font-display);
+  font-size: 15vw;
+  line-height: 0.85;
+  color: var(--text-light);
+  text-transform: uppercase;
+  position: relative;
+  width: 100%;
+}
+
+.word-builder {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.word-base {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+/* Bottom Filler Text */
+.hero-bottom-text {
+  position: relative;
+  width: 100%;
+  padding: 0 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.hero-bottom-text span {
+  flex: 1;
+}
+
+.hero-bottom-text .left {
+  text-align: left;
+}
+
+.hero-bottom-text .center {
+  text-align: center;
+  opacity: 0.8;
+}
+
+.hero-bottom-text .right {
+  text-align: right;
+}
+
+/* Remove old clouds since background image is used */
+.cloud {
+  display: none;
+}
+
+/* 2. Lore Section */
+.lore {
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  color: var(--text-light);
+}
+
+#lore {
+  justify-content: flex-start;
+  padding-left: 8%;
+}
+
+.lore-bg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.lore-bg {
+  width: 100%;
+  height: 100%;
+  background-image: url('/manifesto-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(0px); /* Unblurred background */
+  transform: scale(1.15); /* Prevent blur edge gaps */
+}
+
+.lore-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* A beautiful fade from left to right, combined with bottom vignette for text contrast */
+  background: 
+    linear-gradient(to right, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0.5) 40%, transparent 80%),
+    linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 2;
+}
+
+#lore .lore-content {
+  text-align: left;
+  max-width: 650px;
+  z-index: 10;
+}
+
+#lore .section-title {
+  text-align: left;
+  font-size: 7vw;
+  font-weight: 900;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 20px;
+}
+
+#lore .lore-text {
+  font-size: 1.35rem;
+  line-height: 1.6;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.lore-content {
+  position: relative;
+  z-index: 10;
+  max-width: 800px;
+  text-align: center;
+}
+
+.lore-text {
+  font-size: 1.5rem;
+  color: var(--text-light);
+  margin-top: 30px;
+  text-shadow: 0 4px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* 3. Manifesto */
+.manifesto {
+  background: #000000;
+  color: #fafafa; /* Off-white */
+  align-items: flex-start;
+  padding-top: 5px;
+}
+
+.manifesto-bg-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.manifesto-bg-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.0);
+  will-change: opacity, transform;
+}
+
+/* Layer specific backgrounds with vignettes and gradients */
+.manifesto-bg-layer.layer-1 {
+  background-image: 
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.85) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 50%),
+    url('/1-bg.jpg');
+  opacity: 1; /* Layer 1 is visible by default */
+  z-index: 1;
+}
+
+.manifesto-bg-layer.layer-2 {
+  background-image: 
+    radial-gradient(circle at center, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.85) 100%),
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.85) 0%, rgba(0, 0, 0, 0) 50%),
+    url('/2-bg.jpg');
+  z-index: 2;
+}
+
+.manifesto-bg-layer.layer-3 {
+  background-image: url('/3-bg.jpg');
+  z-index: 3;
+}
+
+.manifesto-bg-layer.layer-4 {
+  background-image: url('/4-bg.jpeg');
+  z-index: 4;
+}
+
+.manifesto-scroll {
+  display: flex;
+  width: max-content;
+  padding: 0 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.manifesto-text {
+  font-size: 12vw;
+  font-family: var(--font-display);
+  white-space: nowrap;
+}
+
+
+/* 4. Ecosystem */
+.ecosystem {
+  background: var(--bg-secondary);
+  flex-direction: column;
+}
+
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 50px;
+}
+
+.bento-item {
+  background: white;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  transition: transform 0.3s ease;
+}
+
+.bento-item:hover {
+  transform: translateY(-10px);
+}
+
+.bento-item h3 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+
+/* Footer */
+.footer {
+  background: var(--text-dark);
+  color: var(--text-light);
+  flex-direction: column;
+  text-align: center;
+}
+
+.footer-title {
+  font-size: 10vw;
+  color: var(--accent-lime);
+}
