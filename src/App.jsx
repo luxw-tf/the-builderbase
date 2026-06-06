@@ -32,6 +32,9 @@ import HackathonsPage from './pages/HackathonsPage';
 // Styles
 import './App.css';
 
+// Domain utilities for subdomain routing
+import { isDaoSubdomain, getNavigationUrls } from './services/domainUtils';
+
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
@@ -49,39 +52,61 @@ function App() {
   const baseRef = useRef(null);
   const bottomTextRef = useRef(null);
 
+  const isDao = isDaoSubdomain();
+
+  const handleEnterPortal = (tab = 'home') => {
+    const { daoUrl } = getNavigationUrls();
+    const targetPath = tab === 'home' ? '' : `/${tab}`;
+    window.location.href = `${daoUrl}${targetPath}`;
+  };
+
   // Custom client-side router popstate listener
   useEffect(() => {
     const handleLocationChange = () => {
       const path = window.location.pathname;
       
-      // Special routing to open DAO Portal at Bounties tab directly
-      if (path === '/bounties') {
-        setPortalTab('bounties');
-        setShowPortal(true);
-        window.history.replaceState({}, '', '/');
-        setCurrentPath('/');
+      if (isDao) {
+        const allowedTabs = ['home', 'events', 'bounties', 'directory', 'governance', 'treasury'];
+        const tabFromPath = path.substring(1) || 'home';
+        let mappedTab = tabFromPath;
+        if (tabFromPath === 'ecosystem') mappedTab = 'directory';
+        
+        if (allowedTabs.includes(mappedTab)) {
+          setPortalTab(mappedTab);
+        } else {
+          // Redirect invalid paths on subdomain back to main domain
+          const { mainUrl } = getNavigationUrls();
+          window.location.href = `${mainUrl}${path}${window.location.search}`;
+        }
       } else {
-        setCurrentPath(path);
+        // Main domain routing
+        if (path === '/bounties') {
+          // Redirect to subdomain bounties
+          const { daoUrl } = getNavigationUrls();
+          window.location.href = `${daoUrl}/bounties`;
+        } else {
+          setCurrentPath(path);
+        }
       }
     };
     
     window.addEventListener('popstate', handleLocationChange);
-    // Trigger on first render to capture /bounties or other deep links
+    // Trigger on first render to capture deep links or routing rules
     handleLocationChange();
     
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
     };
-  }, []);
+  }, [isDao]);
 
   // Reset scroll position on route changes
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentPath]);
 
-  // Freeze scroll when DAO portal is open
+  // Freeze scroll when DAO portal is open or on DAO subdomain
   useEffect(() => {
-    if (showPortal) {
+    if (showPortal || isDao) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -89,7 +114,7 @@ function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showPortal]);
+  }, [showPortal, isDao]);
 
   // GSAP ScrollTrigger and Lenis smooth scrolling (Homepage only)
   useEffect(() => {
@@ -249,6 +274,23 @@ function App() {
     };
   }, [showPortal, currentPath]);
 
+  if (isDao) {
+    const handleExit = () => {
+      const { mainUrl } = getNavigationUrls();
+      window.location.href = mainUrl;
+    };
+
+    return (
+      <div className="app">
+        <DaoPortal 
+          key={portalTab}
+          initialTab={portalTab}
+          onClose={handleExit} 
+        />
+      </div>
+    );
+  }
+
   // Main page content router switch
   const renderPageContent = () => {
     switch (currentPath) {
@@ -262,7 +304,7 @@ function App() {
               builderRef={builderRef}
               baseRef={baseRef}
               bottomTextRef={bottomTextRef}
-              onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }}
+              onEnterPortal={() => handleEnterPortal('home')}
             />
             <Lore />
             <Manifesto
@@ -281,7 +323,7 @@ function App() {
       case '/events':
         return <EventsPage />;
       case '/builders':
-        return <BuildersPage onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }} />;
+        return <BuildersPage onEnterPortal={() => handleEnterPortal('home')} />;
       case '/ecosystem':
         return <EcosystemPage />;
       case '/chapters':
@@ -309,7 +351,7 @@ function App() {
               builderRef={builderRef}
               baseRef={baseRef}
               bottomTextRef={bottomTextRef}
-              onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }}
+              onEnterPortal={() => handleEnterPortal('home')}
             />
             <Lore />
             <Manifesto
@@ -331,7 +373,7 @@ function App() {
   return (
     <div className="app">
       {/* Sticky nav for subpages */}
-      {currentPath !== '/' && <Navbar onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }} />}
+      {currentPath !== '/' && <Navbar onEnterPortal={() => handleEnterPortal('home')} />}
       
       {renderPageContent()}
 

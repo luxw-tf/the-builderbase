@@ -35,6 +35,34 @@ const DaoPortal = ({ onClose, initialTab = 'home' }) => {
   
   const [savingProfile, setSavingProfile] = useState(false);
 
+  // Sync prop changes (e.g. browser back/forward) to active tab state
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
+
+  // Sync activeTab changes to pathname if on DAO subdomain
+  useEffect(() => {
+    const isDao = window.location.hostname.startsWith('dao.') || 
+                  new URLSearchParams(window.location.search).get('subdomain') === 'dao' || 
+                  new URLSearchParams(window.location.search).get('dao') === 'true';
+                  
+    if (isDao) {
+      const pathMap = {
+        home: '/',
+        events: '/events',
+        bounties: '/bounties',
+        directory: '/directory',
+        governance: '/governance',
+        treasury: '/treasury'
+      };
+      
+      const newPath = pathMap[activeTab] || '/';
+      if (window.location.pathname !== newPath) {
+        window.history.pushState({}, '', newPath);
+      }
+    }
+  }, [activeTab]);
+
   // Block counter simulation
   useEffect(() => {
     const interval = setInterval(() => {
