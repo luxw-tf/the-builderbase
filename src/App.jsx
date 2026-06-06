@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Lenis from 'lenis';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -16,6 +16,7 @@ import BuilderTools from './components/BuilderTools';
 import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
+import DaoPortal from './components/DaoPortal';
 
 // Styles
 import './App.css';
@@ -23,6 +24,7 @@ import './App.css';
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const [showPortal, setShowPortal] = useState(false);
   const manifestoRef = useRef(null);
   const manifestoTextRef = useRef(null);
   
@@ -33,7 +35,23 @@ function App() {
   const baseRef = useRef(null);
   const bottomTextRef = useRef(null);
 
+  // Freeze scroll when DAO portal is open
   useEffect(() => {
+    if (showPortal) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [showPortal]);
+
+  useEffect(() => {
+    if (showPortal) {
+      return;
+    }
+
     // 1. Initialize Lenis for smooth scrolling
     const lenis = new Lenis({
       duration: 1.2,
@@ -184,7 +202,7 @@ function App() {
       heroCtx.revert();
       pinContext.revert();
     };
-  }, []);
+  }, [showPortal]);
 
   return (
     <div className="app">
@@ -195,6 +213,7 @@ function App() {
         builderRef={builderRef}
         baseRef={baseRef}
         bottomTextRef={bottomTextRef}
+        onEnterPortal={() => setShowPortal(true)}
       />
 
       <Lore />
@@ -221,6 +240,8 @@ function App() {
       <FAQ />
 
       <Footer />
+
+      {showPortal && <DaoPortal onClose={() => setShowPortal(false)} />}
     </div>
   );
 }

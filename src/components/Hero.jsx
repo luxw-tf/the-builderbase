@@ -1,6 +1,7 @@
 import { useWallet } from '../context/WalletContext.jsx';
+import { Wallet } from 'lucide-react';
 
-const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) => {
+const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef, onEnterPortal }) => {
   const { account, isConnected, isConnecting, connectWallet, disconnectWallet } = useWallet();
 
   const formatAddress = (addr) => {
@@ -24,20 +25,27 @@ const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) =>
 
       <nav className="nav-bar" ref={navRef}>
         <div className="nav-logo">BUILDER BASE</div>
-        {isConnected ? (
-          <button className="btn-connect btn-connected" onClick={disconnectWallet}>
-            <span className="dot-active"></span>
-            <span className="btn-text" data-address={formatAddress(account)}></span>
+        <div className="nav-actions-wrap" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
+          <button className="btn-enter-portal-nav" onClick={onEnterPortal}>
+            DAO Portal
           </button>
-        ) : (
-          <button 
-            className={`btn-connect ${isConnecting ? 'btn-connecting' : ''}`} 
-            onClick={connectWallet}
-            disabled={isConnecting}
-          >
-            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
-          </button>
-        )}
+          
+          {isConnected ? (
+            <button className="btn-connect btn-connected" onClick={disconnectWallet}>
+              <span className="dot-active"></span>
+              <span className="btn-text" data-address={formatAddress(account)}></span>
+            </button>
+          ) : (
+            <button 
+              className={`btn-connect-icon ${isConnecting ? 'btn-connecting' : ''}`} 
+              onClick={connectWallet}
+              disabled={isConnecting}
+              title={isConnecting ? "Connecting..." : "Connect Wallet"}
+            >
+              <Wallet size={18} />
+            </button>
+          )}
+        </div>
       </nav>
 
       <div className="hero-content">
