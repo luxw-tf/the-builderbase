@@ -118,7 +118,7 @@ function App() {
 
   // GSAP ScrollTrigger and Lenis smooth scrolling (Homepage only)
   useEffect(() => {
-    if (showPortal || currentPath !== '/') {
+    if (showPortal || currentPath !== '/' || isDao) {
       return;
     }
 
@@ -272,7 +272,7 @@ function App() {
       heroCtx.revert();
       pinContext.revert();
     };
-  }, [showPortal, currentPath]);
+  }, [showPortal, currentPath, isDao]);
 
   if (isDao) {
     const handleExit = () => {
