@@ -12,11 +12,22 @@ import Ecosystem from './components/Ecosystem';
 import Avatars from './components/Avatars';
 import Roadmap from './components/Roadmap';
 import Tokenomics from './components/Tokenomics';
-import BuilderTools from './components/BuilderTools';
-import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import DaoPortal from './components/DaoPortal';
+import Navbar from './components/Navbar';
+
+// Pages
+import EventsPage from './pages/EventsPage';
+import BuildersPage from './pages/BuildersPage';
+import EcosystemPage from './pages/EcosystemPage';
+import ChaptersPage from './pages/ChaptersPage';
+import ProjectsPage from './pages/ProjectsPage';
+import ApplyPage from './pages/ApplyPage';
+import AboutPage from './pages/AboutPage';
+import PropulsionLabsPage from './pages/PropulsionLabsPage';
+import BlogPage from './pages/BlogPage';
+import HackathonsPage from './pages/HackathonsPage';
 
 // Styles
 import './App.css';
@@ -25,6 +36,9 @@ gsap.registerPlugin(ScrollTrigger);
 
 function App() {
   const [showPortal, setShowPortal] = useState(false);
+  const [portalTab, setPortalTab] = useState('home');
+  const [currentPath, setCurrentPath] = useState(window.location.pathname);
+  
   const manifestoRef = useRef(null);
   const manifestoTextRef = useRef(null);
   
@@ -34,6 +48,36 @@ function App() {
   const builderRef = useRef(null);
   const baseRef = useRef(null);
   const bottomTextRef = useRef(null);
+
+  // Custom client-side router popstate listener
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const path = window.location.pathname;
+      
+      // Special routing to open DAO Portal at Bounties tab directly
+      if (path === '/bounties') {
+        setPortalTab('bounties');
+        setShowPortal(true);
+        window.history.replaceState({}, '', '/');
+        setCurrentPath('/');
+      } else {
+        setCurrentPath(path);
+      }
+    };
+    
+    window.addEventListener('popstate', handleLocationChange);
+    // Trigger on first render to capture /bounties or other deep links
+    handleLocationChange();
+    
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
+
+  // Reset scroll position on route changes
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [currentPath]);
 
   // Freeze scroll when DAO portal is open
   useEffect(() => {
@@ -47,8 +91,9 @@ function App() {
     };
   }, [showPortal]);
 
+  // GSAP ScrollTrigger and Lenis smooth scrolling (Homepage only)
   useEffect(() => {
-    if (showPortal) {
+    if (showPortal || currentPath !== '/') {
       return;
     }
 
@@ -202,46 +247,100 @@ function App() {
       heroCtx.revert();
       pinContext.revert();
     };
-  }, [showPortal]);
+  }, [showPortal, currentPath]);
+
+  // Main page content router switch
+  const renderPageContent = () => {
+    switch (currentPath) {
+      case '/':
+        return (
+          <>
+            <Hero
+              heroRef={heroRef}
+              bgRef={bgRef}
+              navRef={navRef}
+              builderRef={builderRef}
+              baseRef={baseRef}
+              bottomTextRef={bottomTextRef}
+              onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }}
+            />
+            <Lore />
+            <Manifesto
+              manifestoRef={manifestoRef}
+              manifestoTextRef={manifestoTextRef}
+            />
+            <Factions />
+            <Ecosystem />
+            <Avatars />
+            <Roadmap />
+            <Tokenomics />
+            <FAQ />
+            <Footer />
+          </>
+        );
+      case '/events':
+        return <EventsPage />;
+      case '/builders':
+        return <BuildersPage onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }} />;
+      case '/ecosystem':
+        return <EcosystemPage />;
+      case '/chapters':
+        return <ChaptersPage />;
+      case '/projects':
+        return <ProjectsPage />;
+      case '/apply':
+        return <ApplyPage />;
+      case '/about':
+        return <AboutPage />;
+      case '/propulsion-labs':
+        return <PropulsionLabsPage />;
+      case '/blog':
+        return <BlogPage />;
+      case '/hackathons':
+        return <HackathonsPage />;
+      default:
+        // Fallback to home page
+        return (
+          <>
+            <Hero
+              heroRef={heroRef}
+              bgRef={bgRef}
+              navRef={navRef}
+              builderRef={builderRef}
+              baseRef={baseRef}
+              bottomTextRef={bottomTextRef}
+              onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }}
+            />
+            <Lore />
+            <Manifesto
+              manifestoRef={manifestoRef}
+              manifestoTextRef={manifestoTextRef}
+            />
+            <Factions />
+            <Ecosystem />
+            <Avatars />
+            <Roadmap />
+            <Tokenomics />
+            <FAQ />
+            <Footer />
+          </>
+        );
+    }
+  };
 
   return (
     <div className="app">
-      <Hero
-        heroRef={heroRef}
-        bgRef={bgRef}
-        navRef={navRef}
-        builderRef={builderRef}
-        baseRef={baseRef}
-        bottomTextRef={bottomTextRef}
-        onEnterPortal={() => setShowPortal(true)}
-      />
+      {/* Sticky nav for subpages */}
+      {currentPath !== '/' && <Navbar onEnterPortal={() => { setPortalTab('home'); setShowPortal(true); }} />}
+      
+      {renderPageContent()}
 
-      <Lore />
-
-      <Manifesto
-        manifestoRef={manifestoRef}
-        manifestoTextRef={manifestoTextRef}
-      />
-
-      <Factions />
-
-      <Ecosystem />
-
-      <Avatars />
-
-      <Roadmap />
-
-      <Tokenomics />
-
-      <BuilderTools />
-
-      <Testimonials />
-
-      <FAQ />
-
-      <Footer />
-
-      {showPortal && <DaoPortal onClose={() => setShowPortal(false)} />}
+      {showPortal && (
+        <DaoPortal 
+          initialTab={portalTab}
+          onClose={() => setShowPortal(false)} 
+        />
+      )}
     </div>
   );
 }

@@ -7,14 +7,14 @@ const DirectoryHub = ({ addLog }) => {
   const { account } = useWallet();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('Startups'); // Startups, Developer Tools, Grants & Opportunities
+  const [activeTab, setActiveTab] = useState('Community Projects'); // Community Projects, Dev Tools, Grants
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
   // Form states
   const [formName, setFormName] = useState('');
   const [formDesc, setFormDesc] = useState('');
-  const [formCategory, setFormCategory] = useState('Startups');
+  const [formCategory, setFormCategory] = useState('Community Projects');
   const [formLink, setFormLink] = useState('');
 
   useEffect(() => {
@@ -92,7 +92,7 @@ const DirectoryHub = ({ addLog }) => {
       {/* Tab select and submission button row */}
       <div className="bounties-filters-row">
         <div className="directory-tabs">
-          {['Startups', 'Developer Tools', 'Grants & Opportunities'].map(tab => (
+          {['Community Projects', 'Dev Tools', 'Grants'].map(tab => (
             <button
               key={tab}
               className={`dir-tab-btn ${activeTab === tab ? 'active' : ''}`}
@@ -195,9 +195,9 @@ const DirectoryHub = ({ addLog }) => {
                     value={formCategory}
                     onChange={(e) => setFormCategory(e.target.value)}
                   >
-                    <option value="Startups">Startups // dApps</option>
-                    <option value="Developer Tools">Developer Tools</option>
-                    <option value="Grants & Opportunities">Grants & Opportunities</option>
+                    <option value="Community Projects">Community Projects // dApps</option>
+                    <option value="Dev Tools">Dev Tools</option>
+                    <option value="Grants">Grants</option>
                   </select>
                 </div>
                 <div className="form-group">

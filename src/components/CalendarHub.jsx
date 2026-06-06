@@ -258,8 +258,8 @@ const CalendarHub = ({ addLog, member }) => {
           alignItems: 'flex-end', 
           position: 'relative',
           overflow: 'hidden',
-          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.4)',
-          border: '1px solid rgba(255, 255, 255, 0.08)'
+          boxShadow: '0 8px 20px rgba(0, 0, 0, 0.1)',
+          border: '1px solid var(--void-border-glass)'
         }}>
           <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', background: 'linear-gradient(to top, rgba(8,8,10,0.85) 0%, transparent 100%)' }} />
           <span className="luma-event-cat" style={{ position: 'relative', zIndex: 2, background: '#08080a', border: '1px solid rgba(255,255,255,0.1)', color: 'var(--accent-lime)', fontSize: '0.65rem', fontWeight: 800, padding: '4px 10px', borderRadius: '6px', textTransform: 'uppercase' }}>{selectedEvent.category}</span>
@@ -288,12 +288,12 @@ const CalendarHub = ({ addLog, member }) => {
             </div>
           </div>
           
-          <p style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.6, margin: '10px 0', whiteSpace: 'pre-wrap' }}>
+          <p style={{ fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.6, margin: '10px 0', whiteSpace: 'pre-wrap' }}>
             {selectedEvent.description}
           </p>
 
           {/* Redirect RSVP Action */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid rgba(255, 255, 255, 0.08)', paddingTop: '15px', marginTop: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--void-border-glass)', paddingTop: '15px', marginTop: '10px' }}>
             {selectedEvent.isCancelled ? (
               <span style={{ color: '#ff6347', fontWeight: 700, fontSize: '0.9rem' }}>This event has been cancelled</span>
             ) : (
@@ -399,14 +399,14 @@ const CalendarHub = ({ addLog, member }) => {
 
         {/* Filter Pill capsule */}
         <div className="luma-filter-capsule">
-          {['All', 'Hackathon', 'Workshop', 'Meetup'].map(cat => (
+          {['All', 'Hackathon', 'Builder Night', 'Workshop', 'Meetup'].map(cat => (
             <button 
               key={cat}
               type="button"
               className={`luma-filter-capsule-btn ${filter === cat ? 'active' : ''}`} 
               onClick={() => setFilter(cat)}
             >
-              {cat === 'All' ? 'All' : cat + 's'}
+              {cat === 'All' ? 'All' : cat}
             </button>
           ))}
         </div>
@@ -541,7 +541,7 @@ const CalendarHub = ({ addLog, member }) => {
 
             {/* Category Filters for Large Grid */}
             <div className="filter-pills" style={{ marginBottom: '20px' }}>
-              {['All', 'Hackathon', 'Workshop', 'Meetup'].map(cat => (
+              {['All', 'Hackathon', 'Builder Night', 'Workshop', 'Meetup'].map(cat => (
                 <button
                   key={cat}
                   className={`filter-pill ${filter === cat ? 'active' : ''}`}
@@ -579,7 +579,7 @@ const CalendarHub = ({ addLog, member }) => {
                       {dateEvents.map(e => (
                         <span 
                           key={e.id} 
-                          className={`cell-event-indicator ${e.category.toLowerCase()}`}
+                          className={`cell-event-indicator ${e.category.replace(/\s+/g, '-').toLowerCase()}`}
                           title={e.title}
                           style={{ background: e.isCancelled ? '#ff6347' : undefined }}
                         />
@@ -643,6 +643,7 @@ const CalendarHub = ({ addLog, member }) => {
                     onChange={(e) => setFormCategory(e.target.value)}
                   >
                     <option value="Hackathon">Hackathon</option>
+                    <option value="Builder Night">Builder Night</option>
                     <option value="Workshop">Workshop</option>
                     <option value="Meetup">Meetup</option>
                   </select>

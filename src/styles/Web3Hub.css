@@ -1444,6 +1444,327 @@
   color: var(--text-light);
 }
 
+/* Redesigned DAO Portal Cyberpunk Command Center Styles */
+.dao-portal-v2 {
+  --void-bg-base: #fdfaf6;
+  --void-bg-panel: #ffffff;
+  --void-border-glass: rgba(0, 0, 0, 0.08);
+  --void-border-glass-hover: rgba(0, 0, 0, 0.15);
+  --glow-lime: 0 4px 12px rgba(0, 0, 0, 0.02);
+  --glow-lime-strong: 0 10px 30px rgba(0, 0, 0, 0.04);
+  --text-dim: #524343;
+  --text-light: #201a1a;
+  --text-dark: #ffffff;
+  --accent-lime: #884e4f;
+  --accent-lime-light: #ffb5b5;
+  --accent-sky: #30628c;
+  --accent-sky-light: #cee5ff;
+  --accent-orange: #ff6b00;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--void-bg-base);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  color: var(--text-light);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Status Bar */
+.portal-status-bar {
+  height: 48px;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  position: relative;
+  z-index: 200;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  color: var(--text-light);
+}
+.psb-left {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.psb-logo { color: var(--accent-lime); font-weight: 700; letter-spacing: 1px; }
+.psb-network {
+  background: rgba(48, 98, 140, 0.08);
+  border: 1px solid rgba(48, 98, 140, 0.2);
+  color: var(--accent-sky);
+  padding: 3px 10px;
+  border-radius: 4px;
+}
+.psb-block { color: var(--text-dim); display: flex; align-items: center; gap: 6px; }
+.psb-dot {
+  width: 6px; height: 6px;
+  background: #71c000;
+  border-radius: 50%;
+  animation: blink 1.5s ease-in-out infinite;
+}
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+.psb-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.psb-wallet {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  color: var(--text-light);
+  font-family: 'Space Mono', monospace;
+  font-size: 0.75rem;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.psb-wallet.connected {
+  background: rgba(0, 0, 0, 0.03);
+}
+.psb-wallet.connected:hover {
+  border-color: #ff4444;
+  color: #ff4444;
+}
+.dot-connected {
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: #71c000;
+  display: inline-block;
+  box-shadow: 0 0 6px #71c000;
+}
+.psb-wallet.connected:hover .dot-connected {
+  background: #ff4444;
+  box-shadow: 0 0 6px #ff4444;
+}
+.psb-close {
+  background: transparent;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-dim);
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.7rem;
+  transition: all 0.2s;
+}
+.psb-close:hover { border-color: #ff4444; color: #ff4444; }
+
+/* Left Sidebar */
+.portal-sidebar {
+  width: 64px;
+  background: #ffffff;
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px 0;
+  gap: 8px;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 10;
+}
+.sidebar-icon-btn {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
+  position: relative;
+}
+.sidebar-icon-btn:hover {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.1);
+  color: var(--accent-lime);
+}
+.sidebar-icon-btn.active {
+  background: var(--accent-lime-light);
+  border-color: var(--accent-lime);
+  color: var(--accent-lime);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+.sidebar-icon-btn::after {
+  content: attr(data-label);
+  position: absolute;
+  left: calc(100% + 12px);
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: var(--text-light);
+  font-size: 0.72rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: all 0.15s;
+  font-family: 'Space Mono', monospace;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.sidebar-icon-btn:hover::after { opacity: 1; transform: translateX(0); }
+
+/* Live Terminal Panel */
+.portal-terminal {
+  width: 280px;
+  flex-shrink: 0;
+  background: #ffffff;
+  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  font-family: 'Space Mono', monospace;
+  position: relative;
+  z-index: 10;
+  overflow: hidden;
+}
+.portal-terminal.collapsed {
+  width: 48px;
+}
+.terminal-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.terminal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.terminal-entry {
+  border-left: 2px solid rgba(0, 0, 0, 0.15);
+  padding-left: 10px;
+  font-size: 0.68rem;
+  line-height: 1.5;
+  animation: fadeInUp 0.3s ease-out;
+  word-break: break-all;
+  color: var(--text-light);
+}
+.terminal-entry.success { border-left-color: #71c000; color: #3a6b00; }
+.terminal-entry.info { border-left-color: var(--accent-sky); color: #006080; }
+.terminal-entry.warning { border-left-color: var(--accent-orange); color: #b34a00; }
+.terminal-time { color: var(--text-dim); margin-right: 6px; }
+
+/* Scanlines overlay */
+.portal-scanlines {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.02) 3px,
+    rgba(0, 0, 0, 0.02) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
+  opacity: 0.3;
+}
+
+/* Category Color codes indicators on Calendar grid */
+.cell-event-indicator.builder-night { background-color: #f6851b; }
+.cell-event-indicator.conference { background-color: #c084fc; }
+
+.event-cat-tag.builder-night { background: rgba(246, 133, 27, 0.1); color: #f6851b; }
+.event-cat-tag.conference { background: rgba(192, 132, 252, 0.1); color: #c084fc; }
+
+/* Subpages General Container Styles */
+.subpage-container {
+  font-family: 'Inter', sans-serif;
+}
+
+/* Drawer & Modal Light overrides for v2 portal */
+.dao-portal-v2 .drawer-content {
+  background: #ffffff;
+  color: var(--text-light);
+  border-left: 1px solid var(--void-border-glass);
+  box-shadow: -10px 0 50px rgba(0, 0, 0, 0.05);
+}
+.dao-portal-v2 .drawer-close {
+  color: var(--text-dim);
+}
+.dao-portal-v2 .drawer-close:hover {
+  color: var(--text-light);
+}
+.dao-portal-v2 .modal-content {
+  background: #ffffff;
+  border: 1px solid var(--void-border-glass);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  color: var(--text-light);
+}
+.dao-portal-v2 .form-control {
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  color: var(--text-light);
+}
+.dao-portal-v2 .form-control:focus {
+  border-color: var(--accent-sky);
+  background: rgba(48, 98, 140, 0.02);
+  box-shadow: 0 0 10px rgba(48, 98, 140, 0.1);
+}
+.dao-portal-v2 .form-group label {
+  color: var(--text-dim);
+}
+.dao-portal-v2 .applicant-card {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid var(--void-border-glass);
+  border-radius: 8px;
+  padding: 12px;
+  margin-top: 10px;
+}
+.dao-portal-v2 .applicant-wallet {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.8rem;
+  color: var(--text-light);
+}
+.dao-portal-v2 .applicant-pitch {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+  margin-top: 8px;
+  font-style: italic;
+}
+.dao-portal-v2 .btn-assign-hunter {
+  background: var(--accent-sky-light);
+  color: var(--accent-sky);
+  border: 1px solid rgba(48, 98, 140, 0.2);
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.2s;
+}
+.dao-portal-v2 .btn-assign-hunter:hover {
+  background: var(--accent-sky);
+  color: #ffffff;
+}
+
 
 
 

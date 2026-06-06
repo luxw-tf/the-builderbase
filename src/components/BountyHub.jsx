@@ -356,7 +356,7 @@ const BountyHub = ({ addLog }) => {
 
               <div>
                 <h5 className="stat-label" style={{ marginBottom: '6px' }}>Gig Description</h5>
-                <p style={{ fontSize: '0.9rem', color: 'rgba(255, 255, 255, 0.85)', lineHeight: 1.6 }}>{selectedBounty.description}</p>
+                <p style={{ fontSize: '0.9rem', color: 'var(--text-light)', lineHeight: 1.6 }}>{selectedBounty.description}</p>
               </div>
 
               {/* DYNAMIC FORMS BASED ON WALLET / BOUNTY RELATION */}

@@ -3,14 +3,20 @@ import { useWallet } from '../context/WalletContext.jsx';
 import CalendarHub from './CalendarHub.jsx';
 import BountyHub from './BountyHub.jsx';
 import DirectoryHub from './DirectoryHub.jsx';
+import DashboardTab from './DashboardTab.jsx';
+import GovernanceTab from './GovernanceTab.jsx';
+import TreasuryTab from './TreasuryTab.jsx';
+import PortalBackground from './PortalBackground.jsx';
 import { Web3Service } from '../services/web3Service.js';
-import { Calendar, Award, Compass, LogOut, Terminal, Wallet, User, Settings, Link2, X } from 'lucide-react';
+import { LayoutDashboard, Calendar, Award, Compass, Vote, Gem, Terminal, Wallet, User, X, LogOut, ChevronRight, ChevronLeft } from 'lucide-react';
 import '../styles/Web3Hub.css';
 
-const DaoPortal = ({ onClose }) => {
+const DaoPortal = ({ onClose, initialTab = 'home' }) => {
   const { account, isConnected, isConnecting, connectWallet, disconnectWallet } = useWallet();
-  const [activeTab, setActiveTab] = useState('calendar'); // calendar, bounties, directory
+  const [activeTab, setActiveTab] = useState(initialTab); // home, events, bounties, directory, governance, treasury
   const [txLogs, setTxLogs] = useState([]);
+  const [blockNumber, setBlockNumber] = useState(12456231);
+  const [terminalCollapsed, setTerminalCollapsed] = useState(false);
 
   // Member registry & profile configuration states
   const [member, setMember] = useState(null);
@@ -29,10 +35,18 @@ const DaoPortal = ({ onClose }) => {
   
   const [savingProfile, setSavingProfile] = useState(false);
 
+  // Block counter simulation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setBlockNumber(prev => prev + Math.floor(Math.random() * 3 + 1));
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
   // Log transaction events in the simulation terminal
   const addLog = (message, type = 'info') => {
     const timestamp = new Date().toLocaleTimeString();
-    setTxLogs(prev => [{ time: timestamp, text: message, type }, ...prev].slice(0, 10));
+    setTxLogs(prev => [{ time: timestamp, text: message, type }, ...prev].slice(0, 15));
   };
 
   useEffect(() => {
@@ -151,147 +165,146 @@ const DaoPortal = ({ onClose }) => {
     return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
   };
 
-  return (
-    <div className="dao-portal-overlay">
-      {/* 1. Header Bar */}
-      <header className="portal-header">
-        <div className="portal-logo-wrap">
-          <span className="portal-badge">BB // DAO</span>
-          <span className="network-tag">Base Sepolia</span>
-        </div>
+  const sidebarItems = [
+    { id: 'home', icon: <LayoutDashboard size={20} />, label: 'Dashboard' },
+    { id: 'events', icon: <Calendar size={20} />, label: 'Events' },
+    { id: 'bounties', icon: <Award size={20} />, label: 'Bounty Hub' },
+    { id: 'directory', icon: <Compass size={20} />, label: 'Ecosystem' },
+    { id: 'governance', icon: <Vote size={20} />, label: 'Governance' },
+    { id: 'treasury', icon: <Gem size={20} />, label: 'Treasury' }
+  ];
 
-        {/* Wallet & Profile actions */}
-        <div className="portal-nav-actions">
+  return (
+    <div className="dao-portal-v2" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: 100, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      
+      {/* Background Particle Network & CRT Scanline Overlay */}
+      <PortalBackground />
+      <div className="portal-scanlines" />
+
+      {/* Slim Top Status Bar */}
+      <header className="portal-status-bar" style={{ position: 'relative', zIndex: 10 }}>
+        <div className="psb-left">
+          <span className="psb-logo">◈ BUILDER BASE DAO</span>
+          <span className="psb-network">Base Sepolia</span>
+          <span className="psb-block">
+            <span className="psb-dot" />
+            BLOCK: {blockNumber}
+          </span>
+        </div>
+        <div className="psb-right">
           {isConnected && member && (
-            <button className="btn-profile-settings" onClick={() => setIsProfileModalOpen(true)}>
-              <User size={14} style={{ color: hasProfileSet() ? 'var(--accent-lime)' : 'inherit' }} />
+            <button className="psb-wallet connected" style={{ marginRight: '10px' }} onClick={() => setIsProfileModalOpen(true)}>
+              <User size={12} style={{ color: hasProfileSet() ? 'var(--accent-lime)' : 'inherit' }} />
               {getProfileBadgeText()}
             </button>
           )}
 
           {isConnected ? (
-            <button className="btn-connect btn-connected" onClick={disconnectWallet}>
-              <span className="dot-active"></span>
-              <span className="btn-text" data-address={formatAddress(account)}></span>
+            <button className="psb-wallet connected" onClick={disconnectWallet}>
+              <span className="dot-connected" />
+              {formatAddress(account)}
             </button>
           ) : (
-            <button 
-              className={`btn-connect-icon ${isConnecting ? 'btn-connecting' : ''}`} 
-              onClick={connectWallet}
-              disabled={isConnecting}
-              title={isConnecting ? "Connecting..." : "Connect Wallet"}
-            >
-              <Wallet size={18} />
+            <button className="psb-wallet" onClick={connectWallet}>
+              {isConnecting ? "Connecting..." : "Connect Wallet"}
             </button>
           )}
-
-          <button className="btn-exit-portal" onClick={onClose}>
-            <LogOut size={16} />
-            Exit Portal
-          </button>
+          <button className="psb-close" onClick={onClose}>✕ EXIT</button>
         </div>
       </header>
 
-      {/* 2. Main Portal Body */}
-      {isConnected ? (
-        isRegistering ? (
-          <div className="portal-main-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1, flexDirection: 'column', gap: '20px', textAlign: 'center' }}>
-            <div style={{ width: '56px', height: '56px', border: '3px solid rgba(182, 255, 64, 0.15)', borderTopColor: 'var(--accent-lime)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
-            <h3 style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-light)' }}>Establishing Onchain Identity</h3>
-            <p style={{ color: 'var(--text-dim)', maxWidth: '440px', fontSize: '0.9rem', lineHeight: 1.5 }}>
-              Registering your wallet in the Builder Base DAO registry on Base Sepolia. 
-              <span style={{ display: 'block', color: 'var(--accent-lime)', marginTop: '8px', fontWeight: 600 }}>Gas fee is fully sponsored by the DAO Paymaster</span>
-            </p>
-          </div>
-        ) : (
-          <div className="portal-main-content">
-            {/* Complete Profile Reminder Alert */}
-            {member && !hasProfileSet() && (
-              <div className="glass-panel" style={{ border: '1px solid rgba(182, 255, 64, 0.3)', background: 'linear-gradient(135deg, rgba(182, 255, 64, 0.05) 0%, transparent 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', padding: '20px 30px' }}>
-                <div>
-                  <h4 style={{ color: 'var(--text-light)', fontWeight: 800, fontSize: '1.1rem', marginBottom: '4px' }}>Complete Your Builder Social Identity</h4>
-                  <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Setup your onchain builder profile details to unlock exclusive DAO hackathons, developer gigs, and grant payouts.</p>
-                </div>
-                <button className="btn-primary" onClick={() => setIsProfileModalOpen(true)} style={{ padding: '8px 20px', fontSize: '0.8rem' }}>
-                  Setup Profile
-                </button>
-              </div>
-            )}
+      {/* Main Panel Body */}
+      <div className="portal-body" style={{ display: 'flex', flex: 1, overflow: 'hidden', position: 'relative', zIndex: 10 }}>
+        
+        {/* Left Sidebar Nav */}
+        <aside className="portal-sidebar">
+          {sidebarItems.map(item => (
+            <button
+              key={item.id}
+              onClick={() => setActiveTab(item.id)}
+              className={`sidebar-icon-btn ${activeTab === item.id ? 'active' : ''}`}
+              data-label={item.label}
+            >
+              {item.icon}
+            </button>
+          ))}
+        </aside>
 
-            {/* Tab Navigation */}
-            <div className="portal-tabs-bar">
-              <button 
-                className={`tab-btn ${activeTab === 'calendar' ? 'active' : ''}`}
-                onClick={() => setActiveTab('calendar')}
-                title="Onchain Calendar"
-              >
-                <Calendar size={18} />
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'bounties' ? 'active' : ''}`}
-                onClick={() => setActiveTab('bounties')}
-                title="Bounties & Gigs"
-              >
-                <Award size={18} />
-              </button>
-              <button 
-                className={`tab-btn ${activeTab === 'directory' ? 'active' : ''}`}
-                onClick={() => setActiveTab('directory')}
-                title="Ecosystem Portal"
-              >
-                <Compass size={18} />
-              </button>
+        {/* Main Content Area */}
+        <main className="portal-main" style={{ flex: 1, overflowY: 'auto', padding: '30px' }}>
+          {isRegistering ? (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column', gap: '20px', textAlign: 'center' }}>
+              <div style={{ width: '56px', height: '56px', border: '3px solid rgba(182, 255, 64, 0.15)', borderTopColor: 'var(--accent-lime)', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--text-light)' }}>Establishing Onchain Identity</h3>
+              <p style={{ color: 'var(--text-dim)', maxWidth: '440px', fontSize: '0.9rem', lineHeight: 1.5 }}>
+                Registering your wallet in the Builder Base DAO registry on Base Sepolia. 
+                <span style={{ display: 'block', color: 'var(--accent-lime)', marginTop: '8px', fontWeight: 600 }}>Gas fee is fully sponsored by the DAO Paymaster</span>
+              </p>
             </div>
+          ) : (
+            <>
+              {/* Complete Profile Reminder Alert */}
+              {isConnected && member && !hasProfileSet() && (
+                <div className="glass-panel" style={{ border: '1px solid rgba(182, 255, 64, 0.3)', background: 'linear-gradient(135deg, rgba(182, 255, 64, 0.05) 0%, transparent 100%)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', padding: '20px 30px', flexWrap: 'wrap', gap: '15px' }}>
+                  <div>
+                    <h4 style={{ color: 'var(--text-light)', fontWeight: 800, fontSize: '1.1rem', marginBottom: '4px' }}>Complete Your Builder Social Identity</h4>
+                    <p style={{ color: 'var(--text-dim)', fontSize: '0.85rem' }}>Setup your onchain builder profile details to unlock exclusive DAO hackathons, developer gigs, and grant payouts.</p>
+                  </div>
+                  <button className="btn-primary" onClick={() => setIsProfileModalOpen(true)} style={{ padding: '8px 20px', fontSize: '0.8rem' }}>
+                    Setup Profile
+                  </button>
+                </div>
+              )}
 
-            {/* Active Tab View */}
-            <div style={{ marginTop: '20px' }}>
-              {activeTab === 'calendar' && <CalendarHub addLog={addLog} member={member} />}
+              {/* Render Selected Tab */}
+              {activeTab === 'home' && <DashboardTab member={member} setActiveTab={setActiveTab} onEditProfile={() => setIsProfileModalOpen(true)} />}
+              {activeTab === 'events' && <CalendarHub addLog={addLog} member={member} />}
               {activeTab === 'bounties' && <BountyHub addLog={addLog} />}
               {activeTab === 'directory' && <DirectoryHub addLog={addLog} />}
-            </div>
+              {activeTab === 'governance' && <GovernanceTab addLog={addLog} />}
+              {activeTab === 'treasury' && <TreasuryTab addLog={addLog} />}
+            </>
+          )}
+        </main>
 
-            {/* Persistent Transaction Log Terminal */}
-            <div style={{ marginTop: '40px' }}>
-              <h4 style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.85rem', color: 'var(--text-dim)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                <Terminal size={14} />
-                Onchain Event Stream // Base Sepolia RPC
-              </h4>
-              <div className="blockchain-terminal">
-                {txLogs.length === 0 ? (
-                  <div className="terminal-line">No events streamed yet.</div>
-                ) : (
-                  txLogs.map((log, i) => (
-                    <div key={i} className={`terminal-line ${log.type === 'success' ? 'terminal-success' : ''}`}>
-                      <span className="terminal-time">[{log.time}]</span>
-                      <span>{log.text}</span>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        )
-      ) : (
-        <div className="portal-main-content" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexGrow: 1 }}>
-          <div className="glass-panel wallet-prompt-banner">
-            <div style={{ display: 'flex', background: 'rgba(182, 255, 64, 0.1)', padding: '20px', borderRadius: '50%', color: 'var(--accent-lime)' }}>
-              <Wallet size={48} />
-            </div>
-            <h3>Web3 Authorization Required</h3>
-            <p>Connect your MetaMask wallet or Web3 provider to verify your signature and access the onchain calendar, gig board, and DAO registry on Base Sepolia.</p>
-            <button className="btn-large-connect" onClick={connectWallet}>
-              Connect Wallet
+        {/* Live Monospace Terminal Panel (Right sidebar) */}
+        <aside className={`portal-terminal ${terminalCollapsed ? 'collapsed' : ''}`} style={{ width: terminalCollapsed ? '48px' : '280px', transition: 'width 0.2s', display: 'flex', flexDirection: 'column' }}>
+          <div className="terminal-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '14px 16px' }}>
+            {!terminalCollapsed && <span>◈ Live Event Stream</span>}
+            <button 
+              onClick={() => setTerminalCollapsed(!terminalCollapsed)}
+              style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', cursor: 'pointer', padding: 0 }}
+            >
+              {terminalCollapsed ? <ChevronLeft size={16} /> : <ChevronRight size={16} />}
             </button>
           </div>
-        </div>
-      )}
+          
+          {!terminalCollapsed && (
+            <div className="terminal-body" style={{ flex: 1, overflowY: 'auto', padding: '12px' }}>
+              {txLogs.length === 0 ? (
+                <div className="terminal-entry info">
+                  <span className="terminal-time">[{new Date().toLocaleTimeString()}]</span>
+                  Listening for RPC logs...
+                </div>
+              ) : (
+                txLogs.map((log, i) => (
+                  <div key={i} className={`terminal-entry ${log.type}`}>
+                    <span className="terminal-time">[{log.time}]</span>
+                    {log.text}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+        </aside>
+      </div>
 
       {/* PROFILE SETUP MODAL */}
       {isProfileModalOpen && (
         <div className="modal-overlay">
-          <div className="glass-panel modal-content" style={{ maxWidth: '600px' }}>
+          <div className="glass-panel modal-content" style={{ maxWidth: '600px', background: '#ffffff', border: '1px solid var(--void-border-glass)' }}>
             <div className="modal-header" style={{ marginBottom: '16px' }}>
-              <h3>DAO Profile Setup</h3>
+              <h3 style={{ fontSize: '1.4rem' }}>DAO Profile Setup</h3>
               <button className="btn-close-modal" onClick={() => setIsProfileModalOpen(false)}>
                 <X size={20} />
               </button>
@@ -306,11 +319,10 @@ const DaoPortal = ({ onClose }) => {
                 </div>
               </div>
 
-              {/* UNIFIED BUILDER PROFILE FORM */}
-              <div style={{ animation: 'modal-enter 0.2s ease-out' }}>
+              <div style={{ animation: 'modal-enter 0.2s ease-out', display: 'flex', flexDirection: 'column', gap: '14px' }}>
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Full Name</label>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Full Name</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -320,15 +332,15 @@ const DaoPortal = ({ onClose }) => {
                       required
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Username</label>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Username</label>
                     <div style={{ position: 'relative' }}>
-                      <span style={{ position: 'absolute', left: '16px', top: '12px', color: 'var(--text-dim)' }}>@</span>
+                      <span style={{ position: 'absolute', left: '16px', top: '10px', color: 'var(--text-dim)' }}>@</span>
                       <input 
                         type="text" 
                         className="form-control" 
-                        style={{ paddingLeft: '32px' }}
-                        placeholder="0x9899" 
+                        style={{ paddingLeft: '32px', width: '100%' }}
+                        placeholder="its_punit05" 
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         required
@@ -337,8 +349,8 @@ const DaoPortal = ({ onClose }) => {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Profession / Role</label>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Profession / Role</label>
                   <input 
                     type="text" 
                     className="form-control" 
@@ -348,8 +360,8 @@ const DaoPortal = ({ onClose }) => {
                   />
                 </div>
 
-                <div className="form-group">
-                  <label>Bio & Experience Summary</label>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Bio & Experience Summary</label>
                   <textarea 
                     className="form-control" 
                     rows="3" 
@@ -360,8 +372,8 @@ const DaoPortal = ({ onClose }) => {
                 </div>
 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label>Website / Portfolio URL</label>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Website / Portfolio URL</label>
                     <input 
                       type="url" 
                       className="form-control" 
@@ -370,8 +382,8 @@ const DaoPortal = ({ onClose }) => {
                       onChange={(e) => setWebsite(e.target.value)}
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Location / Country</label>
+                  <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Location / Country</label>
                     <input 
                       type="text" 
                       className="form-control" 
@@ -382,8 +394,8 @@ const DaoPortal = ({ onClose }) => {
                   </div>
                 </div>
 
-                <div className="form-group">
-                  <label>Skills & Expertise</label>
+                <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                  <label style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-dim)' }}>Skills & Expertise</label>
                   <input 
                     type="text" 
                     className="form-control" 
@@ -394,7 +406,7 @@ const DaoPortal = ({ onClose }) => {
                 </div>
               </div>
 
-              <div className="modal-footer">
+              <div className="modal-footer" style={{ marginTop: '24px', display: 'flex', justifyContent: 'flex-end', gap: '12px' }}>
                 <button type="button" className="btn-secondary" onClick={() => setIsProfileModalOpen(false)}>Cancel</button>
                 <button type="submit" className="btn-primary" disabled={savingProfile}>
                   {savingProfile ? 'Updating registry...' : 'Save Social Identity'}
