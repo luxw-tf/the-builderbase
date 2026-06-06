@@ -101,8 +101,103 @@
   text-transform: uppercase;
   font-size: 0.9rem;
   cursor: pointer;
-  border: none;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-connect:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(182, 255, 64, 0.45);
+  background: #c3ff5c;
+}
+
+.btn-connect:active {
+  transform: translateY(0);
+}
+
+.btn-connecting {
+  opacity: 0.8;
+  cursor: not-allowed;
+  animation: pulse-connecting 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse-connecting {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+/* Connected state (Glassmorphism & premium details) */
+.btn-connect.btn-connected {
+  background: rgba(26, 26, 26, 0.6);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(182, 255, 64, 0.3);
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-connected .btn-text::before {
+  content: attr(data-address);
+}
+
+/* Hover disconnect style */
+.btn-connect.btn-connected:hover {
+  background: rgba(255, 157, 108, 0.15); /* soft orange tint */
+  border-color: var(--accent-orange);
+  color: var(--accent-orange);
+  box-shadow: 0 4px 20px rgba(255, 157, 108, 0.2);
+}
+
+.btn-connect.btn-connected:hover .btn-text::before {
+  content: "Disconnect";
+}
+
+.btn-connect.btn-connected:hover .dot-active {
+  background-color: var(--accent-orange);
+  box-shadow: 0 0 8px var(--accent-orange);
+}
+
+/* Pulsing Green Dot */
+.dot-active {
+  width: 8px;
+  height: 8px;
+  background-color: var(--accent-lime);
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+  box-shadow: 0 0 8px var(--accent-lime);
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dot-active::after {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: -4px;
+  right: -4px;
+  bottom: -4px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-lime);
+  opacity: 0.8;
+  animation: pulse-dot 1.5s infinite ease-out;
+}
+
+@keyframes pulse-dot {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
 }
 
 /* Hero Typography (BUILDERBASE split for GSAP) */

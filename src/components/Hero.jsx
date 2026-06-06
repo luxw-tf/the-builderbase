@@ -1,4 +1,13 @@
+import { useWallet } from '../context/WalletContext.jsx';
+
 const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) => {
+  const { account, isConnected, isConnecting, connectWallet, disconnectWallet } = useWallet();
+
+  const formatAddress = (addr) => {
+    if (!addr) return '';
+    return `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
+  };
+
   return (
     <section className="section hero" ref={heroRef}>
       {/* Background Parallax Video + Vignette */}
@@ -15,7 +24,20 @@ const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) =>
 
       <nav className="nav-bar" ref={navRef}>
         <div className="nav-logo">BUILDER BASE</div>
-        <button className="btn-connect">Connect Wallet</button>
+        {isConnected ? (
+          <button className="btn-connect btn-connected" onClick={disconnectWallet}>
+            <span className="dot-active"></span>
+            <span className="btn-text" data-address={formatAddress(account)}></span>
+          </button>
+        ) : (
+          <button 
+            className={`btn-connect ${isConnecting ? 'btn-connecting' : ''}`} 
+            onClick={connectWallet}
+            disabled={isConnecting}
+          >
+            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+          </button>
+        )}
       </nav>
 
       <div className="hero-content">
@@ -35,3 +57,4 @@ const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) =>
 };
 
 export default Hero;
+
