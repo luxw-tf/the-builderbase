@@ -12,6 +12,8 @@ import Ecosystem from './components/Ecosystem';
 import Avatars from './components/Avatars';
 import Roadmap from './components/Roadmap';
 import Tokenomics from './components/Tokenomics';
+import BuilderTools from './components/BuilderTools';
+import Testimonials from './components/Testimonials';
 import FAQ from './components/FAQ';
 import Footer from './components/Footer';
 import DaoPortal from './components/DaoPortal';
@@ -304,7 +306,6 @@ function App() {
               builderRef={builderRef}
               baseRef={baseRef}
               bottomTextRef={bottomTextRef}
-              onEnterPortal={() => handleEnterPortal('home')}
             />
             <Lore />
             <Manifesto
@@ -316,6 +317,8 @@ function App() {
             <Avatars />
             <Roadmap />
             <Tokenomics />
+            <BuilderTools />
+            <Testimonials />
             <FAQ />
             <Footer />
           </>
@@ -351,7 +354,6 @@ function App() {
               builderRef={builderRef}
               baseRef={baseRef}
               bottomTextRef={bottomTextRef}
-              onEnterPortal={() => handleEnterPortal('home')}
             />
             <Lore />
             <Manifesto
@@ -363,6 +365,8 @@ function App() {
             <Avatars />
             <Roadmap />
             <Tokenomics />
+            <BuilderTools />
+            <Testimonials />
             <FAQ />
             <Footer />
           </>
