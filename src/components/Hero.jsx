@@ -1,7 +1,6 @@
 import { useWallet } from '../context/WalletContext.jsx';
-import { Wallet } from 'lucide-react';
 
-const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef, onEnterPortal }) => {
+const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef }) => {
   const { account, isConnected, isConnecting, connectWallet, disconnectWallet } = useWallet();
 
   const formatAddress = (addr) => {
@@ -25,50 +24,20 @@ const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef, onEn
 
       <nav className="nav-bar" ref={navRef}>
         <div className="nav-logo">BUILDER BASE</div>
-        <div className="nav-actions-wrap" style={{ display: 'flex', gap: '15px', alignItems: 'center' }}>
-          <button className="btn-enter-portal-nav" onClick={onEnterPortal}>
-            DAO Portal
+        {isConnected ? (
+          <button className="btn-connect btn-connected" onClick={disconnectWallet}>
+            <span className="dot-active"></span>
+            <span className="btn-text" data-address={formatAddress(account)}></span>
           </button>
-          <a
-            href="https://lu.ma/builderbase"
-            target="_blank"
-            rel="noreferrer"
-            className="btn-enter-portal-nav outline"
-            style={{
-              background: 'transparent',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              color: 'rgba(255, 255, 255, 0.8)',
-              padding: '10px 24px',
-              borderRadius: '50px',
-              fontWeight: 800,
-              textTransform: 'uppercase',
-              fontSize: '0.9rem',
-              cursor: 'pointer',
-              textDecoration: 'none',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseOver={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.05)'; }}
-            onMouseOut={(e) => { e.currentTarget.style.background = 'transparent'; }}
+        ) : (
+          <button 
+            className={`btn-connect ${isConnecting ? 'btn-connecting' : ''}`} 
+            onClick={connectWallet}
+            disabled={isConnecting}
           >
-            Events ↗
-          </a>
-
-          {isConnected ? (
-            <button className="btn-connect btn-connected" onClick={disconnectWallet}>
-              <span className="dot-active"></span>
-              <span className="btn-text" data-address={formatAddress(account)}></span>
-            </button>
-          ) : (
-            <button
-              className={`btn-connect-icon ${isConnecting ? 'btn-connecting' : ''}`}
-              onClick={connectWallet}
-              disabled={isConnecting}
-              title={isConnecting ? "Connecting..." : "Connect Wallet"}
-            >
-              <Wallet size={18} />
-            </button>
-          )}
-        </div>
+            {isConnecting ? 'Connecting...' : 'Connect Wallet'}
+          </button>
+        )}
       </nav>
 
       <div className="hero-content">
@@ -79,9 +48,9 @@ const Hero = ({ heroRef, bgRef, navRef, builderRef, baseRef, bottomTextRef, onEn
       </div>
 
       <div className="hero-bottom-text" ref={bottomTextRef}>
-        <span className="left">INDIA'S WEB3 + AI BUILDER NETWORK</span>
+        <span className="left">BUILDING THE FUTURE OF WEB3</span>
         <span className="center">SCROLL TO ENTER BASE</span>
-        <span className="right">EST. MAY 2025 · 3,500+ BUILDERS</span>
+        <span className="right">EST. 2026 / CONTRACT ACTIVE</span>
       </div>
     </section>
   );

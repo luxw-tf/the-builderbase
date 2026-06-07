@@ -11,7 +11,7 @@ const Manifesto = ({ manifestoRef, manifestoTextRef }) => {
 
       <div className="manifesto-scroll" ref={manifestoTextRef}>
         <h2 className="manifesto-text">
-          WE BUILD ON ETH • WE BUILD ON MONAD • WE BUILD ON AVAX • WE BUILD ON BNB • INDIA'S WEB3 ARMY • 3,500 BUILDERS STRONG • DELHI NCR • MUMBAI • BENGALURU • HACKATHONS • BUILDER NIGHTS • WORKSHOPS • Metamask • Web3 Backed • JOIN BUILDER BASE • BUILDING THE FUTURE FROM INDIA •
+          WE BUILD • WE CREATE • WE DISRUPT • WE INNOVATE • WE ARE THE BUILDER BASE • JOIN THE MOVEMENT
         </h2>
       </div>
     </section>
